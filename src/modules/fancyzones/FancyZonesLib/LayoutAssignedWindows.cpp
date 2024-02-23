@@ -106,38 +106,66 @@ void LayoutAssignedWindows::CycleWindows(HWND window, bool reverse)
     }
 }
 
-HWND GetLowestZOrderWindow(const std::vector<HWND>& windows)
+std::pair<HWND, int64_t> GetLowestZOrderWindow(const std::vector<HWND>& windows)
 {
     // Find which window in windows is at the top of the z-order
     HWND window = GetTopWindow(GetDesktopWindow());
+    int64_t zOrder{};
     while (window)
     {
         if (find(begin(windows), end(windows), window) != end(windows))
         {
-            return window;
+            return std::make_pair(window, zOrder);
         }
 
         window = GetWindow(window, GW_HWNDNEXT);
+        ++zOrder;
     }
 
     // TODO: Log not found error
-    return nullptr;
+    return std::make_pair(nullptr, 0);
 }
 
-HWND LayoutAssignedWindows::GetCurrentWindowFromZoneIndexSet(ZoneIndexSet indexSet) noexcept
+HWND LayoutAssignedWindows::GetTopmostWindowFromTargetZone(ZoneIndex targetZone, const ZoneIndexSet& currentWindowZones) noexcept
 {
-    if (!m_windowsByIndexSets.contains(indexSet))
+    // Find all ZoneIndexSets which contain target zone, skipping the current window's ZoneIndexSet
+    std::vector<ZoneIndexSet> targetZoneIndexSets;
+    for (const auto& [indexSet, _] : m_windowsByIndexSets)
+    {
+        if (indexSet != currentWindowZones)
+        {
+            if (find(begin(indexSet), end(indexSet), targetZone) != end(indexSet))
+            {
+                targetZoneIndexSets.emplace_back(indexSet);
+            }
+        }
+    }
+
+    if (targetZoneIndexSets.empty())
     {
         return nullptr;
     }
 
-    const auto& assignedWindows = m_windowsByIndexSets[indexSet];
-    if (assignedWindows.empty())
+    // Choose the ZoneIndexSet whose topmost window is topmost accross all index sets
+    HWND topmostWindow{};
+    int64_t lowestZOrder = INT64_MAX;
+    for (const auto& indexSet : targetZoneIndexSets)
     {
-        return nullptr;
+        const auto& assignedWindows = m_windowsByIndexSets[indexSet];
+        if (assignedWindows.empty())
+        {
+            return nullptr;
+        }
+
+        auto [window, zOrder] = GetLowestZOrderWindow(assignedWindows);
+        if (zOrder < lowestZOrder)
+        {
+            lowestZOrder = zOrder;
+            topmostWindow = window;
+        }
     }
 
-    return GetLowestZOrderWindow(assignedWindows);
+    return topmostWindow;
 }
 
 void LayoutAssignedWindows::InsertWindowIntoZone(HWND window, std::optional<size_t> tabSortKeyWithinZone, const ZoneIndexSet& indexSet)

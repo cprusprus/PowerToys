@@ -17,7 +17,7 @@ public :
     
     void CycleWindows(HWND window, bool reverse);
 
-    HWND GetCurrentWindowFromZoneIndexSet(ZoneIndexSet indexSet) noexcept;
+    HWND GetTopmostWindowFromTargetZone(ZoneIndex targetZone, const ZoneIndexSet& currentWindowZones) noexcept;
 
 private:
     std::map<HWND, ZoneIndexSet> m_windowIndexSet{};

@@ -1184,7 +1184,7 @@ bool FancyZones::FocusZoneByDirectionAndPosition(HWND window, RECT windowRect, D
     ZoneIndex result = FancyZonesUtils::ChooseNextZoneByPosition(vkCode, windowRect, zoneRects);
     if (static_cast<size_t>(result) < zoneRects.size())
     {
-        bool success = workArea->Focus({ freeZoneIndices[result] });
+        bool success = workArea->Focus(freeZoneIndices[result], windowZones);
         if (success)
         {
             // TODO: Tracing

@@ -160,22 +160,19 @@ bool WorkArea::Unsnap(HWND window)
     return true;
 }
 
-bool WorkArea::Focus(const ZoneIndexSet& zones)
+bool WorkArea::Focus(ZoneIndex targetZone, const ZoneIndexSet& currentWindowZones)
 {
-    if (!m_layout || zones.empty())
+    if (!m_layout)
     {
         return false;
     }
 
-    for (ZoneIndex zone : zones)
+    if (static_cast<size_t>(targetZone) >= m_layout->Zones().size())
     {
-        if (static_cast<size_t>(zone) >= m_layout->Zones().size())
-        {
-            return false;
-        }
+        return false;
     }
 
-    HWND windowToFocus = m_layoutWindows.GetCurrentWindowFromZoneIndexSet(zones);
+    HWND windowToFocus = m_layoutWindows.GetTopmostWindowFromTargetZone(targetZone, currentWindowZones);
     if (!windowToFocus)
     {
         return false;
