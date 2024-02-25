@@ -123,7 +123,7 @@ std::pair<HWND, int64_t> GetLowestZOrderWindow(const std::vector<HWND>& windows)
     }
 
     // TODO: Log not found error
-    return std::make_pair(nullptr, 0);
+    return std::make_pair(nullptr, INT64_MAX);
 }
 
 HWND LayoutAssignedWindows::GetTopmostWindowFromTargetZone(ZoneIndex targetZone, const ZoneIndexSet& currentWindowZones) noexcept
