@@ -2367,6 +2367,10 @@ From there, simply click on one of the supported files in the File Explorer and 
     <value>to</value>
     <comment>as in: from x to y</comment>
   </data>
+  <data name="Starts.Text" xml:space="preserve">
+    <value>starts</value>
+    <comment>as in: doing x will start y</comment>
+  </data>
   <data name="LearnMore_Awake.Text" xml:space="preserve">
     <value>Learn more about Awake</value>
     <comment>Awake is a product name, do not loc</comment>
@@ -3440,6 +3444,9 @@ Activate by holding the key for the character you want to add an accent to, then
   </data>
   <data name="QuickAccent_SelectedLanguage_Slovak.Content" xml:space="preserve">
     <value>Slovak</value>
+  </data>
+  <data name="QuickAccent_SelectedLanguage_Slovenian.Content" xml:space="preserve">
+    <value>Slovenian</value>
   </data>
   <data name="QuickAccent_SelectedLanguage_Spanish.Content" xml:space="preserve">
     <value>Spanish</value>
