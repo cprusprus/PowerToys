@@ -157,7 +157,18 @@ HWND LayoutAssignedWindows::GetTopmostWindowFromTargetZone(ZoneIndex targetZone,
             return nullptr;
         }
 
-        auto [window, zOrder] = GetLowestZOrderWindow(assignedWindows);
+        // Skip minimized windows since they may be lower in the Z-order, but not visible to the user
+        std::vector<HWND> windows;
+        for (const auto& window : assignedWindows)
+        {
+            LONG windowStyles = GetWindowLong(window, GWL_STYLE);
+            if (!(windowStyles & WS_MINIMIZE))
+            {
+                windows.push_back(window);
+            }
+        }
+
+        auto [window, zOrder] = GetLowestZOrderWindow(windows);
         if (zOrder < lowestZOrder)
         {
             lowestZOrder = zOrder;
